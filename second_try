@@ -1,0 +1,86 @@
+class WaterQualityChecker:
+    def __init__(self):
+        # Define acceptable ranges for water quality parameters
+        self.standards = {
+            'ph': {'min': 6.5, 'max': 8.5, 'unit': 'pH units'},
+            'turbidity': {'min': 0, 'max': 5, 'unit': 'NTU'},
+            'dissolved_oxygen': {'min': 6, 'max': 14, 'unit': 'mg/L'},
+            'temperature': {'min': 0, 'max': 25, 'unit': '°C'},
+            'total_coliform': {'min': 0, 'max': 0, 'unit': 'per 100mL'},  # should be zero
+            'chlorine': {'min': 0.2, 'max': 4.0, 'unit': 'mg/L'}
+        }
+    
+    def check_parameter(self, param_name, value):
+        """Check if a single parameter is within acceptable range"""
+        if param_name not in self.standards:
+            return False, f"Unknown parameter: {param_name}"
+        
+        param = self.standards[param_name]
+        if value < param['min']:
+            return False, f"{param_name} is too low (min {param['min']} {param['unit']})"
+        elif value > param['max']:
+            return False, f"{param_name} is too high (max {param['max']} {param['unit']})"
+        else:
+            return True, f"{param_name} is within acceptable range"
+    
+    def check_water_quality(self, measurements):
+        """Check multiple water quality parameters"""
+        results = {
+            'overall': True,
+            'parameters': {},
+            'messages': []
+        }
+        
+        for param, value in measurements.items():
+            is_ok, message = self.check_parameter(param, value)
+            results['parameters'][param] = {
+                'value': value,
+                'unit': self.standards[param]['unit'],
+                'is_ok': is_ok,
+                'message': message
+            }
+            if not is_ok:
+                results['overall'] = False
+                results['messages'].append(message)
+        
+        if results['overall']:
+            results['messages'].append("All water quality parameters are within acceptable ranges")
+        else:
+            results['messages'].append("Some water quality parameters are out of range")
+        
+        return results
+    
+    def print_results(self, results):
+        """Print the water quality check results in a readable format"""
+        print("\nWater Quality Check Results:")
+        print("=" * 40)
+        
+        for param, data in results['parameters'].items():
+            status = "OK" if data['is_ok'] else "NOT OK"
+            print(f"{param.upper():<20} {data['value']} {data['unit']} [{status}]")
+            print(f"  - {data['message']}")
+        
+        print("\nSummary:")
+        for msg in results['messages']:
+            print(f"- {msg}")
+
+
+# Example usage
+if __name__ == "__main__":
+    checker = WaterQualityChecker()
+    
+    # Example water sample measurements
+    sample_measurements = {
+        'ph': 7.2,
+        'turbidity': 2.1,
+        'dissolved_oxygen': 8.5,
+        'temperature': 18,
+        'total_coliform': 0,
+        'chlorine': 1.8
+    }
+    
+    # Check the water quality
+    results = checker.check_water_quality(sample_measurements)
+    
+    # Print the results
+    checker.print_results(results)
