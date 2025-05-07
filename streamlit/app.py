@@ -86,7 +86,7 @@ with tab4:
         min_val = float(df[col].min())
         max_val = float(df[col].max())
         mean_val = float(df[col].mean())
-        input_data[col] = st.slider(
+        input_data[col] = st.sidebar.slider(
             f"{col}",
             min_value=round(min_val, 2),
             max_value=round(max_val, 2),
