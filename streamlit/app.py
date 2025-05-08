@@ -8,7 +8,7 @@ import time
 
 
 # Configure the page
-st.set_page_config(page_title="💧 Water Quality App", layout="wide")
+st.set_page_config(page_title="💧 Water Quality App made by abu", layout="wide")
 
 # Load data and model
 @st.cache_data
